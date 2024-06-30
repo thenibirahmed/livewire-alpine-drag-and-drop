@@ -2,8 +2,9 @@
 
 namespace App\Livewire;
 
-use App\Models\Task as TaskModel;
 use Livewire\Component;
+use App\Models\Task as TaskModel;
+use Illuminate\Support\Facades\DB;
 
 class Task extends Component
 {
@@ -19,9 +20,10 @@ class Task extends Component
 
     public function createTask()
     {
+        $position = TaskModel::max('position') + 1;
         TaskModel::create([
             'name' => $this->newTaskName,
-            'position' => 0,
+            'position' => $position,
             'is_completed' => false
         ]);
 
@@ -30,7 +32,13 @@ class Task extends Component
 
     public function deleteTask($taskId)
     {
-        TaskModel::destroy($taskId);
+        $currentTask = TaskModel::find($taskId);
+        $currentPosition = $currentTask->position;
+
+        DB::transaction(function () use ($currentTask, $currentPosition) {
+            TaskModel::where('position', '>', $currentPosition)->decrement('position');
+            $currentTask->delete();
+        });
     }
 
     public function render()

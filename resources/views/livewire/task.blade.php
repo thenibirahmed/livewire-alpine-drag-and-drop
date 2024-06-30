@@ -3,9 +3,9 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <input wire:model='newTaskName' wire:keydown.enter='createTask' type="text" class="border w-full rounded mb-3 border-gray-300" placeholder="Create Task..">
-                <ul role="list" class="divide-y divide-gray-100">
+                <ul x-sort role="list" class="divide-y divide-gray-100">
                     @foreach ( $tasks as $task )
-                        <li class="flex items-center justify-between gap-x-6 py-5 cursor-grab" wire:key='task-{{ $task->id }}'>
+                        <li x-sort:item class="flex items-center justify-between gap-x-6 py-5 cursor-grab" wire:key='task-{{ $task->id }}'>
                             <div class="min-w-0">
                                 <div class="flex items-start gap-x-3">
                                     <p class="text-sm font-semibold leading-6 text-gray-900">{{ $task->name }}</p>
