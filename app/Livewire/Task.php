@@ -41,6 +41,34 @@ class Task extends Component
         });
     }
 
+    public function sortItem($taskId, $newPosition)
+    {
+        $task = TaskModel::find($taskId);
+        $currentPosition = $task->position;
+        $newPosition = $newPosition + 1;
+
+        if( $currentPosition === $newPosition ) return;
+
+        $task->update([
+            'position' => -1
+        ]);
+
+        $tasksWhichNeedsToBeShifted = TaskModel::whereBetween('position', [
+            min($currentPosition, $newPosition),
+            max($currentPosition, $newPosition)
+        ]);
+
+        if( $currentPosition < $newPosition ){
+            $tasksWhichNeedsToBeShifted->decrement('position');
+        }else{
+            $tasksWhichNeedsToBeShifted->increment('position');
+        }
+
+        $task->update([
+            'position' => $newPosition
+        ]);
+    }
+
     public function render()
     {
         return view('livewire.task',[
